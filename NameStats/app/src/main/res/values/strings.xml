@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NameStats</string>
+    <string name="search_hint">Sök efter namn</string>
 </resources>
