@@ -14,6 +14,8 @@ import com.egenvall.namestats.base.presentation.BaseController
 import com.egenvall.namestats.common.di.component.DaggerMainViewComponent
 import com.egenvall.namestats.common.di.component.MainViewComponent
 import com.egenvall.namestats.common.di.module.ActivityModule
+import com.egenvall.namestats.extension.showSnackbar
+import com.egenvall.namestats.model.ContactItem
 import com.genius.groupie.ExpandableGroup
 import com.genius.groupie.GroupAdapter
 import kotlinx.android.synthetic.main.screen_main.view.*
@@ -33,8 +35,6 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
 //===================================================================================
 // Lifecycle methods and initialization
 //===================================================================================
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         val view = inflater.inflate(layoutResId, container, false)
         onViewBound(view)
@@ -48,19 +48,24 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
         contactsRecycler.setHasFixedSize(false)
         contactsRecycler.layoutManager = LinearLayoutManager(applicationContext)
         contactsRecycler.adapter = groupAdapter
-    }
 
-    fun openSearchScreen(origin: Boolean){
-        //Childrouter?
-        /* router.pushController(RouterTransaction.with(SearchController())
-                 .pushChangeHandler(HorizontalChangeHandler())
-                 .popChangeHandler(HorizontalChangeHandler()))*/
+        view.fake_search_container.setOnClickListener { transitionToSearchScreen() }
     }
-
 
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.getContacts()
+    }
+
+//===================================================================================
+// Navigation
+//===================================================================================
+    fun transitionToSearchScreen(){
+        Log.d("TAG","Search here we go")
+    }
+
+    fun transitionToDetailsScreen(contact: ContactItem){
+        Log.d("TAG","Clicked ${contact.name}   ${contact.number}")
     }
 
 //===================================================================================
@@ -84,13 +89,12 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
         group.forEach { groupAdapter.add(it) }
     }
 
-    override fun showMessage(str: String) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showMessage(message: String) {
+        view?.showSnackbar(message)
     }
 
-    override fun clicked(name: String) {
-        Log.d("TAG","Clicked $name")
+    override fun clicked(contact: ContactItem) {
+        transitionToDetailsScreen(contact)
     }
-
 }
 
