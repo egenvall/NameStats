@@ -3,6 +3,7 @@ package com.egenvall.namestats.common.di.component
 import android.content.Context
 import com.egenvall.namestats.common.di.module.AppModule
 import com.egenvall.namestats.common.di.module.SCBModule
+import com.egenvall.namestats.contacts.ContentResolverRepository
 import com.egenvall.namestats.network.Repository
 import dagger.Component
 import javax.inject.Singleton
@@ -13,4 +14,5 @@ import javax.inject.Singleton
 interface AppComponent {
         fun context(): Context
         fun repository() : Repository
+        fun contentResolverRepo(): ContentResolverRepository
 }

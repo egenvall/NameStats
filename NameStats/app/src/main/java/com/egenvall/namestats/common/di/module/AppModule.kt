@@ -6,6 +6,8 @@ import com.egenvall.namestats.common.threading.AndroidUiExecutor
 import com.egenvall.namestats.common.threading.BackgroundExecutor
 import com.egenvall.namestats.common.threading.RxIoExecutor
 import com.egenvall.namestats.common.threading.UiExecutor
+import com.egenvall.namestats.contacts.ContentResolverRepository
+import com.egenvall.namestats.contacts.ContentResolverRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -25,5 +27,9 @@ class AppModule(private val application: Application) {
     @Provides @Singleton @Named("ioExecutor") internal fun provideIoExecutor(
             rxIoExecutor: RxIoExecutor): BackgroundExecutor {
         return rxIoExecutor
+    }
+
+    @Provides @Singleton internal fun provideContentResolverRepository() : ContentResolverRepository{
+        return ContentResolverRepositoryImpl(application)
     }
 }
