@@ -9,5 +9,6 @@ class ContactItem(val name : String, val onClick: (ContactItem) -> Unit ) : Item
     override fun getLayout() = R.layout.item_contact
     override fun bind(binding: ItemContactBinding, position: Int) {
         binding.name.text = name
+        binding.root.setOnClickListener { onClick.invoke(this) }
     }
 }
