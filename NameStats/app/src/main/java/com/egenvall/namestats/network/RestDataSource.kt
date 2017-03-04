@@ -1,7 +1,6 @@
 package com.egenvall.namestats.network
 
 
-import android.util.Log
 import com.egenvall.namestats.model.*
 import rx.Observable
 import javax.inject.Inject
@@ -9,8 +8,9 @@ import javax.inject.Inject
 
 class RestDataSource @Inject constructor(private val service: SCBService) : Repository{
     override fun getDetails(name: String): Observable<NameInfo> {
-        val male = getMaleDetails(name)
-        val female = getFemaleDetails(name)
+        //Make it proper error handling lol
+        val male = getMaleDetails(name).onErrorResumeNext { Observable.just(ServerResponse(listOf(PersonData(listOf("0")))))}
+        val female = getFemaleDetails(name).onErrorResumeNext { Observable.just(ServerResponse(listOf(PersonData(listOf("0")))))}
         return Observable.zip(male,female,{m,f ->
             NameInfo(m.data[0].values[0],f.data[0].values[0])})
     }

@@ -11,6 +11,7 @@ import rx.Observable
 
 
 interface SCBService {
+    //http://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0001/BE0001FNamn10
     @POST
     fun getNameInfo(@Url url: String = "http://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0001/BE0001FNamn10",@Body request: Request): Observable<ServerResponse>
 

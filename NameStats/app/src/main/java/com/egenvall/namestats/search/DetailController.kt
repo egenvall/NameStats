@@ -72,7 +72,7 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         progressView.setType(GeometricProgressView.TYPE.KITE);
         progressView.setNumberOfAngles(6);
         progressView.setColor(R.color.adjacent_pink)
-        progressView.setDuration(1000);
+        progressView.setDuration(500);
     }
 
     fun hideIconsAndNumbers(){
