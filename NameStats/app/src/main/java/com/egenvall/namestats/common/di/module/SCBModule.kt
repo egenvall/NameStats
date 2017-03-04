@@ -18,22 +18,17 @@ import javax.inject.Singleton
 class SCBModule(private val app : NameStatsApp) {
     val baseUrl = "http://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0001/BE0001FNamn10/"
 
-    @Singleton
-    @Provides
-    internal fun provideMoshi(): MoshiConverterFactory {
-        return MoshiConverterFactory.create()
-    }
 
     @Singleton
     @Provides
-    internal fun provideRetrofit(moshiConverterFactory: MoshiConverterFactory): Retrofit {
+    internal fun provideRetrofit(): Retrofit {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
         val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(moshiConverterFactory)
+                .addConverterFactory(MoshiConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
         return retrofit
@@ -47,7 +42,7 @@ class SCBModule(private val app : NameStatsApp) {
 
     @Provides
     @Singleton
-    fun provideRepository(service: SCBService): Repository {
+    fun provideRepository(service: SCBService) : Repository{
         return RestDataSource(service)
     }
 }
