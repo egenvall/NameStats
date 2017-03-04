@@ -10,6 +10,9 @@ import javax.inject.Inject
 
 class ContentResolverRepositoryImpl @Inject constructor(val context: Context) : ContentResolverRepository{
 
+    /**
+     * Retrieves contacts from the phone
+     */
     override fun getContacts(): Observable<ContactList> {
         val contactInfo = context.contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,null,null,null)
         val listOfNames = ContactList(mutableListOf())

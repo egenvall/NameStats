@@ -11,8 +11,6 @@ import com.egenvall.namestats.common.di.module.ActivityModule
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(){
-    protected fun appComponent() = (application as NameStatsApp).appComponent
-    protected fun activityModule() = ActivityModule(this)
     lateinit var mRouter : Router
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -13,9 +13,9 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+
 import com.egenvall.namestats.NameStatsApp
 import com.egenvall.namestats.R
 import com.egenvall.namestats.base.presentation.BaseController
@@ -23,7 +23,6 @@ import com.egenvall.namestats.common.di.component.DaggerMainViewComponent
 import com.egenvall.namestats.common.di.component.MainViewComponent
 import com.egenvall.namestats.common.di.module.ActivityModule
 import com.egenvall.namestats.extension.hide
-import com.egenvall.namestats.extension.invisible
 import com.egenvall.namestats.extension.show
 import com.egenvall.namestats.extension.showSnackbar
 import com.egenvall.namestats.model.Contact
@@ -91,6 +90,10 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
         )
     }
 
+    /**
+     * Subscribe to changes in the Search EditText.
+     * If the text is more than 2 characters long, display the search button, else hide it.
+     */
     fun setupTextSubscription(){
         textSub = RxTextView.textChanges(searchTextView)
                 .map { s -> s.toString()}
@@ -151,7 +154,7 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
 
 
 //===================================================================================
-// View methods
+// Implementation of MainPresenter.View interface
 //===================================================================================
     override fun setContactList(group: List<ExpandableGroup>) {
         group.forEach { groupAdapter.add(it) }

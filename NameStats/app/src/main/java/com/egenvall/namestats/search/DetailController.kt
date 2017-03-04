@@ -1,10 +1,9 @@
 package com.egenvall.namestats.search
 
 import android.graphics.Color
-import android.support.annotation.ColorInt
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.telephony.SmsManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,10 +28,14 @@ import javax.inject.Inject
 
 class DetailController(val contact: Contact = Contact("No name","")) : BaseController<DetailPresenter.View, DetailPresenter>(),
         DetailPresenter.View {
+
     private lateinit var detailComponent: DetailViewComponent
+    //MARK: - MVP components
     override val passiveView: DetailPresenter.View = this
     @Inject override lateinit var presenter: DetailPresenter
     @LayoutRes override val layoutResId: Int = R.layout.screen_detail
+
+    //MARK: - Views
     private lateinit var name: TextView
     private lateinit var maleAmount: TextView
     private lateinit var femaleAmount: TextView
@@ -50,6 +53,12 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         return view
     }
 
+    /**
+     * Inject dependencies and configure the view outlets.
+     * It's not needed to map the views to variables due to Kotlins synthetic properties,
+     * but it is done here anyway since the variables will be used for animations later on and
+     * makes that code a bit more clean.
+     */
     override fun onViewBound(view: View) {
         initInjection()
         name = view.header_name
@@ -63,7 +72,6 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         sendTextButton.isEnabled = false
         sendTextButton.setOnClickListener { sendTextMessage() }
         configureProgressView()
-
     }
 
     fun configureProgressView(){
@@ -76,7 +84,6 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.getNameInfo(contact.name)
-
     }
 
     override fun handleBack(): Boolean {
@@ -90,15 +97,15 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
 // UI Interactions
 //===================================================================================
 
-    fun showIconsAndNumbers(){
-        applyAnimation(femaleIcon)
-        applyAnimation(femaleAmount)
-        applyAnimation(maleIcon)
-        applyAnimation(maleAmount)
+    fun showUIElements(){
+        applyFadeInAnimation(femaleIcon)
+        applyFadeInAnimation(femaleAmount)
+        applyFadeInAnimation(maleIcon)
+        applyFadeInAnimation(maleAmount)
         displaySendButton()
 
     }
-    fun applyAnimation(view: View){
+    fun applyFadeInAnimation(view: View){
         with(view){
             this.show()
             this.alpha = 0.0f
@@ -123,17 +130,20 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
 
     fun contactNumberExists() : Boolean = contact.number.isNotEmpty()
 
+    /**
+     * Calculates the most likely gender of the name. i.e Kim: Male 62% certainty
+     */
     fun calculateGender(details: NameInfo){
         var gender = ""
         var certainty: Double = 0.0
         with(details){
             if (femaleCount.toInt() <= maleCount.toInt()){
                 certainty = 1-(femaleCount.toDouble()/maleCount.toDouble())
-                gender += "male"
+                gender += resources?.getString(R.string.male)
             }
             else{
                 certainty = 1 - (maleCount.toDouble()/femaleCount.toDouble())
-                gender += "female"
+                gender += resources?.getString(R.string.female)
             }
         }
         val result: String
@@ -144,12 +154,20 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
 
     fun setPercentageInformation(gender: String, certainty: String){
         view?.gender_stats?.text = "${contact.name} is a $gender with $certainty% certainty"
-        applyAnimation(view?.gender_stats as View)
+        applyFadeInAnimation(view?.gender_stats as View)
     }
 
     fun sendTextMessage(){
-        Log.d("TAG","Clicked button")
+        try {
+            val smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(contact.number, null, "", null, null);
+            view?.showSnackbar("Message sent")
+        } catch (ex : Exception) {
+            view?.showSnackbar("${ex.message}")
+            ex.printStackTrace()
+        }
     }
+
 
 //===================================================================================
 // Dependency injection
@@ -164,16 +182,24 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         detailComponent.inject(this)
     }
 
-
+//===================================================================================
+// Implementation of the DetailPresenter.View Interface
+//===================================================================================
     override fun setDetails(details: NameInfo) {
-        progressView.hide()
         maleAmount.text = details.maleCount
         femaleAmount.text = details.femaleCount
-        showIconsAndNumbers()
+        showUIElements()
         calculateGender(details)
     }
     override fun showMessage(message: String) {
         view?.showSnackbar(message)
     }
 
+    override fun showProgress() {
+        progressView.show()
+    }
+
+    override fun hideProgress() {
+        progressView.hide()
+    }
 }

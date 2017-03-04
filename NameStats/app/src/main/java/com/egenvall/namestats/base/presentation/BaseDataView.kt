@@ -4,7 +4,7 @@ import android.content.Context
 
 /**
  * The view class for each MVP candidate which loads data can implement this interface.
- * For each View in the app (i.e. an Activity or Fragment), you should extend this
+ * For each View in the app you should extend this
  * interface via an interface specific to that View.
  */
 interface BaseDataView {
@@ -19,18 +19,5 @@ interface BaseDataView {
      */
     fun hideProgress()
 
-    /**
-     * Show a retry view in the event of an error when loading data.
-     */
-    fun showRetry()
 
-    /**
-     * Hide a retry view shown previously shown.
-     */
-    fun hideRetry()
-
-    /**
-     * Get a [Context].
-     */
-    fun context(): Context
 }

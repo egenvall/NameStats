@@ -1,5 +1,6 @@
 package com.egenvall.namestats.main
 
+import com.egenvall.namestats.base.presentation.BaseDataView
 import com.egenvall.namestats.base.presentation.BasePresenter
 import com.egenvall.namestats.common.di.scope.PerScreen
 import com.egenvall.namestats.base.presentation.BaseView
@@ -14,6 +15,8 @@ import javax.inject.Inject
 
 @PerScreen
 class MainPresenter @Inject constructor(val getContactsUsecase: GetContactsUsecase) : BasePresenter<MainPresenter.View>() {
+
+
     fun getContacts(){
         getContactsUsecase.executeUsecase(object: Observer<ContactList>{
             override fun onNext(response: ContactList) {
@@ -26,7 +29,14 @@ class MainPresenter @Inject constructor(val getContactsUsecase: GetContactsUseca
         })
     }
 
-   private fun formatContacts(input: List<Contact>) : List<ExpandableGroup>{
+    /**
+     * Format the retrieved List of [Contact] into [ContactItem]
+     * These are then grouped by first character in the [ContactItem.name]
+     * into a [Map] <Character, List<ContactItem>>
+     * The Map is then traversed to construct[ExpandableGroup] [ExpandableContactHeader]
+     * that are used by Groupie for databinding & to create the expandable list headers.
+     */
+    private fun formatContacts(input: List<Contact>) : List<ExpandableGroup>{
         val list = mutableListOf<ContactItem>()
         input.forEach {
             list.add(ContactItem(it.name,it.number){view.clicked(it)})
@@ -50,7 +60,7 @@ class MainPresenter @Inject constructor(val getContactsUsecase: GetContactsUseca
 // View Interface
 //===================================================================================
 
-    interface View : BaseView {
+    interface View : BaseView{
         fun setContactList(group: List<ExpandableGroup>)
         fun showMessage(message: String)
         fun clicked(contact: ContactItem)
