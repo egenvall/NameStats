@@ -8,4 +8,7 @@
     <color name="whiteText">#FFFFFF</color>
     <color name="card_light_grey">#fcfcfc</color>
     <color name="letter_bg">#E91E63</color>
+    <color name="adjacent_orange">#F19D00</color>
+    <color name="complement_orange">#F16700</color>
+    <color name="adjacent_pink">#FA5C68</color>
 </resources>
