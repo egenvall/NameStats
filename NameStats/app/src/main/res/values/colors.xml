@@ -11,4 +11,5 @@
     <color name="adjacent_orange">#F19D00</color>
     <color name="complement_orange">#F16700</color>
     <color name="adjacent_pink">#FA5C68</color>
+    <color name="disabled_grey">#f4f4f4</color>
 </resources>
