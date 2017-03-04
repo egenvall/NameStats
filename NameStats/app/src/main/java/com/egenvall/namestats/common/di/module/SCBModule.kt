@@ -13,7 +13,9 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-
+/**
+ * Creates the dependencies needed to communicate with a REST API
+ */
 @Module
 class SCBModule(private val app : NameStatsApp) {
     val baseUrl = "http://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0001/BE0001FNamn10/"

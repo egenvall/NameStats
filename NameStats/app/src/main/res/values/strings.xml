@@ -3,4 +3,6 @@
     <string name="search_hint">Sök efter namn</string>
     <string name="name_hint">Kim</string>
     <string name="send_text">Skicka SMS</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
 </resources>
