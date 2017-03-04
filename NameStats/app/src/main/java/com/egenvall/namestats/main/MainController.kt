@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.egenvall.namestats.NameStatsApp
@@ -21,6 +23,7 @@ import com.egenvall.namestats.common.di.component.DaggerMainViewComponent
 import com.egenvall.namestats.common.di.component.MainViewComponent
 import com.egenvall.namestats.common.di.module.ActivityModule
 import com.egenvall.namestats.extension.hide
+import com.egenvall.namestats.extension.invisible
 import com.egenvall.namestats.extension.show
 import com.egenvall.namestats.extension.showSnackbar
 import com.egenvall.namestats.model.Contact
@@ -71,8 +74,15 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
             transitionToDetailsScreen(Contact(name = searchTextView.text.toString().substringBefore(" ")))
         }
         searchTextView = view.searchTextView
+        searchTextView.setOnEditorActionListener() { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                transitionToDetailsScreen(Contact(name = searchTextView.text.toString().substringBefore(" ")))
+                true
+            } else {
+                false
+            }
+        }
         setupTextSubscription()
-
     }
 
     fun hideKeyboard(){
@@ -84,6 +94,7 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
     fun setupTextSubscription(){
         textSub = RxTextView.textChanges(searchTextView)
                 .map { s -> s.toString()}
+                .distinctUntilChanged()
                 .throttleLast(200, TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
                 .debounce (500, TimeUnit.MILLISECONDS)   //Emit the last item if 500ms has passed with no more emits
                 .observeOn(AndroidSchedulers.mainThread())
@@ -98,19 +109,11 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
     }
 
     fun hideSearchButton(){
-        with(searchButton) {
-            this.animate().alpha(0.0f).translationX(-50f).setDuration(300)
-                    .withEndAction { searchButton.hide() }
-        }
+        searchButton.hide()
     }
-    //Looks ugly but will do or now
     fun showSearchButton(){
         if (searchButton.visibility != View.VISIBLE){
-            with(searchButton){
-                this.show()
-                this.alpha = 0.0f
-                this.animate().alpha(1.0f).translationX(10f).setDuration(600)
-            }
+            searchButton.show()
         }
     }
     override fun onAttach(view: View) {
