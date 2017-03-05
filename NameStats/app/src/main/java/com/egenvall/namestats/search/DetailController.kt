@@ -91,7 +91,6 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
     }
 
 
-
 //===================================================================================
 // UI Interactions
 //===================================================================================
@@ -129,45 +128,13 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
 
     fun contactNumberExists() : Boolean = contact.number.isNotEmpty()
 
-    /**
-     * Calculates the most likely gender of the name. i.e Kim: Male 62% certainty
-     */
-    fun calculateGender(details: NameInfo){
-        var gender = ""
-        var certainty: Double = 0.0
-        val fC = details.femaleCount.toInt()
-        val mC = details.maleCount.toInt()
-        if ((fC == 0) and (mC == 0)) setPercentageInformation("No people with that name")
-        else{
-            when(fC > mC){
-                true -> {
-                    certainty = 1 - (mC.toDouble()/fC.toDouble())
-                    gender += resources?.getString(R.string.female)
-                }
-                false -> {
-                    certainty = 1 - (fC.toDouble()/mC.toDouble())
-                    gender += resources?.getString(R.string.male)
-                }
-            }
-
-            val result: String
-            if (certainty.toString()[0] == '1') result = "100"
-            else{ result = certainty.toString().substringAfter(".").take(2) }
-            setPercentageInformation("${contact.name} is a $gender with $result% certainty")
-        }
-    }
-
-    fun setPercentageInformation(result: String){
-        view?.gender_stats?.text = result
-        applyFadeInAnimation(view?.gender_stats as View)
-    }
-
     fun prepareTextMessage(){
         val totalAmount = maleAmount.text.toString().toInt() + femaleAmount.text.toString().toInt()
         val sendString = "Du är en av $totalAmount som heter ${contact.name}!"
         if (totalAmount != 0)
             sendTextMessage(sendString)
     }
+
     fun sendTextMessage(message: String){
         try {
             val smsManager = SmsManager.getDefault();
@@ -200,7 +167,6 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         maleAmount.text = details.maleCount
         femaleAmount.text = details.femaleCount
         showUIElements()
-        calculateGender(details)
     }
     override fun showMessage(message: String) {
         view?.showSnackbar(message)
@@ -212,5 +178,10 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
 
     override fun hideProgress() {
         progressView.hide()
+    }
+
+    override fun setPercentageInformation(result: String){
+        view?.gender_stats?.text = result
+        applyFadeInAnimation(view?.gender_stats as View)
     }
 }
