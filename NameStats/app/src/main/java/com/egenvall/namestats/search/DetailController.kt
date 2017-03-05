@@ -44,7 +44,7 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
     private lateinit var maleIcon: ImageView
     private lateinit var sendTextButton: Button
 
-//===================================================================================
+    //===================================================================================
 // Lifecycle methods and initialization
 //===================================================================================
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -69,8 +69,7 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         femaleAmount = view.female_amount
         progressView = view.progressView
         sendTextButton = view.send_text_button
-        sendTextButton.isEnabled = false
-        sendTextButton.setOnClickListener { sendTextMessage() }
+        sendTextButton.setOnClickListener { prepareTextMessage() }
         configureProgressView()
     }
 
@@ -136,31 +135,43 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
     fun calculateGender(details: NameInfo){
         var gender = ""
         var certainty: Double = 0.0
-        with(details){
-            if (femaleCount.toInt() <= maleCount.toInt()){
-                certainty = 1-(femaleCount.toDouble()/maleCount.toDouble())
-                gender += resources?.getString(R.string.male)
+        val fC = details.femaleCount.toInt()
+        val mC = details.maleCount.toInt()
+        if ((fC == 0) and (mC == 0)) setPercentageInformation("No people with that name")
+        else{
+            when(fC > mC){
+                true -> {
+                    certainty = 1 - (mC.toDouble()/fC.toDouble())
+                    gender += resources?.getString(R.string.female)
+                }
+                false -> {
+                    certainty = 1 - (fC.toDouble()/mC.toDouble())
+                    gender += resources?.getString(R.string.male)
+                }
             }
-            else{
-                certainty = 1 - (maleCount.toDouble()/femaleCount.toDouble())
-                gender += resources?.getString(R.string.female)
-            }
+
+            val result: String
+            if (certainty.toString()[0] == '1') result = "100"
+            else{ result = certainty.toString().substringAfter(".").take(2) }
+            setPercentageInformation("${contact.name} is a $gender with $result% certainty")
         }
-        val result: String
-        if (certainty.toString()[0] == '1') result = "100"
-        else{ result = certainty.toString().substringAfter(".").take(2) }
-        setPercentageInformation(gender,result)
     }
 
-    fun setPercentageInformation(gender: String, certainty: String){
-        view?.gender_stats?.text = "${contact.name} is a $gender with $certainty% certainty"
+    fun setPercentageInformation(result: String){
+        view?.gender_stats?.text = result
         applyFadeInAnimation(view?.gender_stats as View)
     }
 
-    fun sendTextMessage(){
+    fun prepareTextMessage(){
+        val totalAmount = maleAmount.text.toString().toInt() + femaleAmount.text.toString().toInt()
+        val sendString = "Du är en av $totalAmount som heter ${contact.name}!"
+        if (totalAmount != 0)
+            sendTextMessage(sendString)
+    }
+    fun sendTextMessage(message: String){
         try {
             val smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(contact.number, null, "", null, null);
+            smsManager.sendTextMessage(contact.number, null,message, null, null);
             view?.showSnackbar("Message sent")
         } catch (ex : Exception) {
             view?.showSnackbar("${ex.message}")
@@ -182,7 +193,7 @@ class DetailController(val contact: Contact = Contact("No name","")) : BaseContr
         detailComponent.inject(this)
     }
 
-//===================================================================================
+    //===================================================================================
 // Implementation of the DetailPresenter.View Interface
 //===================================================================================
     override fun setDetails(details: NameInfo) {

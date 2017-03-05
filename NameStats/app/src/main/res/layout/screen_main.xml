@@ -47,7 +47,6 @@
             android:textColor="@color/whiteText"
             android:textColorHint="@color/whiteText"
             android:hint="@string/search_hint"
-
             />
 
     </android.support.constraint.ConstraintLayout>
