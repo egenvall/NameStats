@@ -24,7 +24,7 @@
         android:background="@color/colorPrimaryLight"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintBottom_toTopOf="@+id/drop_down_image"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent">
 

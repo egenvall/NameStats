@@ -5,4 +5,5 @@
     <string name="send_text">Skicka SMS</string>
     <string name="male">male</string>
     <string name="female">female</string>
+    <string name="search_demand">Söktext måste innehålla minst tre bokstäver</string>
 </resources>
