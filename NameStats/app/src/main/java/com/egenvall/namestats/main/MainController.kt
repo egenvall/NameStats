@@ -1,7 +1,11 @@
 package com.egenvall.namestats.main
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.support.annotation.LayoutRes
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -51,7 +55,7 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
     private lateinit var searchButton : ImageView
 
 
-//===================================================================================
+    //===================================================================================
 // Lifecycle methods and initialization
 //===================================================================================
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -168,4 +172,5 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
         transitionToDetailsScreen(Contact(contact.name.substringBefore(" "),contact.number))
     }
 }
+
 
