@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-//===================================================================================
+    //===================================================================================
 // Request permissions for API 23+
 //===================================================================================
     private fun checkPermissions() {
@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity(){
             permissions.add(Manifest.permission.READ_CONTACTS)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
             permissions.add(Manifest.permission.INTERNET)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.SEND_SMS)
 
         if (!permissions.isEmpty())
             ActivityCompat.requestPermissions(this,
